@@ -5,7 +5,7 @@
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local Logo = Instance.new("ImageLabel") -- Logo için ImageLabel
+local Logo = Instance.new("ImageButton") -- Logo için ImageButton
 local SeaDropdown = Instance.new("TextButton")
 local IslandsFrame = Instance.new("Frame")
 local SpeedBoostButton = Instance.new("TextButton") -- Hız Artışı
