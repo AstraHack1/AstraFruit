@@ -1,56 +1,116 @@
--- Astra Hile Scripti
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/UI-Library-Repo/YourLibraryHere/main/Library.lua"))()
+-- Sea'ye Göre Adalar İçin Teleport Scripti
+-- Script Sadece Eğitim Amaçlıdır!
 
-local Window = Library:CreateWindow("Astra Hile Menüsü", Color3.fromRGB(0, 0, 0)) -- Siyah arka plan
-local MainTab = Window:CreateTab("Ana Menü")
+-- GUI Oluşturma
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local SeaDropdown = Instance.new("TextButton")
+local IslandsFrame = Instance.new("Frame")
 
--- Başlık
-MainTab:CreateLabel("Astra Hile Scripti")
+-- GUI Özellikleri
+ScreenGui.Parent = game.CoreGui
 
--- Auto Farm Sekmesi
-local AutoFarmSection = MainTab:CreateSection("Auto Farm")
-AutoFarmSection:CreateToggle("Farm Aç/Kapa", function(state)
-    _G.AutoFarm = state
-    while _G.AutoFarm do
-        pcall(function()
-            local player = game.Players.LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
-            for _, enemy in pairs(game.Workspace.Enemies:GetChildren()) do
-                if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
-                    character.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame
-                    wait(0.5)
-                    local tool = character:FindFirstChildOfClass("Tool")
-                    if tool then
-                        tool:Activate()
-                    end
-                end
-            end
-        end)
-        wait(0.1)
-    end
-end)
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 300, 0, 500)
 
--- Eşya Toplama Sekmesi
-local ItemSection = MainTab:CreateSection("Eşya Topla")
-ItemSection:CreateButton("Eşyaları Topla", function()
-    local player = game.Players.LocalPlayer
-    for _, item in pairs(game.Workspace.Items:GetChildren()) do
-        if item:IsA("Part") or item:IsA("MeshPart") then
-            player.Character.HumanoidRootPart.CFrame = item.CFrame
-            wait(0.2)
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Title.Size = UDim2.new(0, 300, 0, 50)
+Title.Font = Enum.Font.SourceSansBold
+Title.Text = "Blox Fruits Teleport Menüsü"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 20
+
+SeaDropdown.Parent = MainFrame
+SeaDropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+SeaDropdown.Position = UDim2.new(0, 0, 0.15, 0)
+SeaDropdown.Size = UDim2.new(0, 300, 0, 50)
+SeaDropdown.Font = Enum.Font.SourceSansBold
+SeaDropdown.Text = "Sea Seç: 1"
+SeaDropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+SeaDropdown.TextSize = 18
+
+IslandsFrame.Parent = MainFrame
+IslandsFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+IslandsFrame.Position = UDim2.new(0, 0, 0.3, 0)
+IslandsFrame.Size = UDim2.new(0, 300, 0, 350)
+
+-- Teleport Fonksiyonu
+function teleport(location)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(location)
+end
+
+-- Ada Düğmeleri Oluşturma
+function createIslandButton(islandName, position)
+    local button = Instance.new("TextButton")
+    button.Parent = IslandsFrame
+    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    button.Size = UDim2.new(0, 280, 0, 40)
+    button.Position = position
+    button.Font = Enum.Font.SourceSans
+    button.Text = islandName
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 16
+    return button
+end
+
+-- Sea Seçimini Tutma
+local currentSea = 1
+local islands = {}
+
+-- Adaları Güncelleme Fonksiyonu
+function updateIslands()
+    for _, child in pairs(IslandsFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
         end
     end
+
+    if currentSea == 1 then
+        -- Sea 1 için adalar
+        islands = {
+            {name = "Starter Island", location = Vector3.new(100, 20, 100)},
+            {name = "Jungle", location = Vector3.new(200, 30, 200)},
+            {name = "Desert", location = Vector3.new(300, 40, 300)},
+            -- Diğer Sea 1 adalarını ekleyebilirsin...
+        }
+    elseif currentSea == 2 then
+        -- Sea 2 için adalar
+        islands = {
+            {name = "Cafe", location = Vector3.new(400, 50, 400)},
+            {name = "Colosseum", location = Vector3.new(500, 60, 500)},
+            {name = "Ussop's Island", location = Vector3.new(600, 70, 600)},
+            -- Diğer Sea 2 adalarını ekleyebilirsin...
+        }
+    elseif currentSea == 3 then
+        -- Sea 3 için adalar
+        islands = {
+            {name = "Port Town", location = Vector3.new(700, 80, 700)},
+            {name = "Floating Turtle", location = Vector3.new(800, 90, 800)},
+            {name = "Great Tree", location = Vector3.new(900, 100, 900)},
+            -- Diğer Sea 3 adalarını ekleyebilirsin...
+        }
+    end
+
+    -- Güncellenen adalar için düğmeleri oluşturma
+    for i, island in ipairs(islands) do
+        local button = createIslandButton(island.name, UDim2.new(0, 0, (i - 1) * 0.15, 0))
+        button.MouseButton1Click:Connect(function()
+            teleport(island.location)
+        end)
+    end
+end
+
+-- Sea Değiştirici
+SeaDropdown.MouseButton1Click:Connect(function()
+    currentSea = currentSea + 1
+    if currentSea > 3 then currentSea = 1 end
+    SeaDropdown.Text = "Sea Seç: " .. currentSea
+    updateIslands()
 end)
 
--- Işınlanma Sekmesi
-local TeleportSection = MainTab:CreateSection("Işınlanma")
-TeleportSection:CreateDropdown("Işınlanma Noktası Seç", {"Spawn", "Düşman Bölgesi", "Market"}, function(option)
-    local player = game.Players.LocalPlayer
-    if option == "Spawn" then
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0) -- Spawn noktası
-    elseif option == "Düşman Bölgesi" then
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(100, 10, 100) -- Düşman bölgesi
-    elseif option == "Market" then
-        player.Character.HumanoidRootPart.CFrame = CFrame.new(200, 10, 200) -- Market alanı
-    end
-end)
+-- İlk Adaları Yükleme
+updateIslands()
